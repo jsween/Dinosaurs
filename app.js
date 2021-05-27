@@ -38,6 +38,8 @@ function Human(species, wt, ht, diet, name) {
 let human = null;
 let dinos = []
 
+const compareBtn = document.getElementById('btn');
+
 /*
     @desc Read the dinos.json file
 */
@@ -58,7 +60,6 @@ function getDinos(dinoData) {
 /*
     @desc Get Human data with IIFE
 */
-const compareBtn = document.getElementById('btn');
 
 compareBtn.addEventListener('click', (function() {
     return function () {
@@ -90,17 +91,13 @@ function configureUI() {
 */
 
 function compareWeight(dino) {
-    console.log(dino);
     const dinoWt = Number(dino.weight);
 
     if (dinoWt > human.weight) {
-        console.log("Dino is heavier");
         return `${dino.species} is ${Math.round(dinoWt / human.weight)} times heavier than you!`;
     } else if (dinoWt < human.weight) {
-        console.log("User is heavier");
         return `You weigh more than a ${dino.species} by ${human.weight - dinoWt} lbs!`;
     } else {
-        console.log(`tie in weight`);
         return `You are as heavy as a ${dino.species}!`;
     }
 }
@@ -114,13 +111,10 @@ function compareHeight(dino) {
     const dinoHt = Number(dino.height);
 
     if (dinoHt > human.height) {
-        console.log("Dino is taller");
         return `${dino.species} is ${dinoHt - human.weight} inches taller than you!`;
     } else if (dinoHt < human.height) {
-        console.log("User is taller");
         return `You are ${human.height - dinoHt} inches taller than a ${dino.species}!`;
     } else {
-        console.log(`You are as heavy as a ${dino.species}!`);
         return `You are as tall as a ${dino.species}`
     }
 }
@@ -139,6 +133,7 @@ function compareDiet(dino) {
 
 /*
     @desc Create a Tile to display dinosaur or human stats
+    @param {creature} A dinosaur or human
 */
 
 function createTile(creature) {
@@ -155,6 +150,7 @@ function createTile(creature) {
 
 /*
     @desc Get the fact for the tile
+    @param {creature} A dinosaur or human
 */
 
 function getFact(creature) {
@@ -167,6 +163,10 @@ function getFact(creature) {
     }
 }
 
+/*
+    @desc Get a random fact
+    @param {creature} A dinosaur or human
+*/
 function getRandomFact(creature) {
     switch(Math.floor((Math.random() * 5))) {
         case 0:
