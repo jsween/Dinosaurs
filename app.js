@@ -14,14 +14,14 @@ function Creature(species, wt, ht, diet) {
 
 /*
     @desc Dino Constructor
-    @param string $habitat - Dinosaur's habitat
+    @param string $where - Dinosaur's habitat
     @param string $period - The period the dinosaur lived in
     @param string $fact - A fact about the dinosaur
 */
 
-function Dino(species, wt, ht, habitat, period, fact, diet) {
+function Dino(species, wt, ht, where, period, fact, diet) {
     Creature.call(this, species, wt, ht, diet);
-    this.habitat = habitat;
+    this.where = where;
     this.period = period;
     this.fact = fact;
 }
@@ -35,10 +35,29 @@ function Human(species, wt, ht, diet, name) {
     this.name = name;
 }
 
+let human = null;
+let dinos = []
+
+/*
+    @desc Read the dinos.json file
+*/
+fetch("./dino.json")
+    .then((res) => res.json())
+    .then((data) => {
+        let dinoData = data.Dinos;
+        getDinos(dinoData);
+    });
+
+function getDinos(dinoData) {
+    dinoArray = Array();
+    dinoData.forEach((dino) => {
+        dinos.push(new Dino(dino.species, dino.weight, dino.height, dino.where, dino.when, dino.fact, dino.diet));
+    });
+}
+
 /*
     @desc Get Human data with IIFE
 */
-let human = null;
 const compareBtn = document.getElementById('btn');
 
 compareBtn.addEventListener('click', (function() {
@@ -49,8 +68,9 @@ compareBtn.addEventListener('click', (function() {
         const weight = formData.get('weight');
         const diet = formData.get('diet');
 
-        human = new Human("homo sapien", name, weight, inches, diet);
-        compareWeight(dino);
+        human = new Human("Human",weight, inches, diet, name);
+        dinos.splice(4, 0, human);
+        addTilesToDOM();
     };
 })());
 
@@ -60,6 +80,7 @@ compareBtn.addEventListener('click', (function() {
 */
 
 function compareWeight(dino) {
+    console.log(dino);
     const dinoWt = Number(dino.weight);
 
     if (dinoWt > human.weight) {
@@ -87,7 +108,7 @@ function compareHeight(dino) {
         return `${dino.species} is ${dinoHt - human.weight} inches taller than you!`;
     } else if (dinoHt < human.height) {
         console.log("User is taller");
-        return `You are ${human.height - dinoHt)} inches taller than a ${dino.species}!`;
+        return `You are ${human.height - dinoHt} inches taller than a ${dino.species}!`;
     } else {
         console.log(`You are as heavy as a ${dino.species}!`);
         return `You are as tall as a ${dino.species}`
@@ -100,8 +121,63 @@ function compareHeight(dino) {
 */
 
 function compareDiet(dino) {
-    const dinodiet = dino.diet;
+    const dinoDiet = dino.diet;
     const msg = `yourself, the ${dino.species} dinosaur was a ${dinoDiet}`;
 
-    return `${dinodiet.toLowerCase() != human.diet.toLowerCase() : "Unlike " ? "Like "}` + msg;
+    return dinoDiet.toLowerCase() != human.diet.toLowerCase() ? "Unlike " + msg : "Like " + msg;
+}
+
+/*
+    @desc Create a Tile to display dinosaur or human stats
+*/
+
+function createTile(creature) {
+    const tile = document.createElement('div');
+    tile.classList.add('grid-item');
+    tile.innerHTML = `
+        <h3>${creature.species}</h3>
+        <img src="images/${creature.species}.png">
+        <p>${getFact(creature)}</p>
+    `;
+
+    document.getElementById('grid').appendChild(tile);
+}
+
+/*
+    @desc Get the fact for the tile
+*/
+
+function getFact(creature) {
+    if (creature instanceof Dino && creature.species != "Pigeon") {
+        return getRandomFact(creature);
+    } else if (creature instanceof Human) {
+        return creature.name;
+    } else {
+        return creature.fact;
+    }
+}
+
+function getRandomFact(creature) {
+    switch(Math.floor((Math.random() * 5))) {
+        case 0:
+            return creature.fact;
+        case 1:
+            return compareHeight(creature);
+        case 2:
+            return compareWeight(creature);
+        case 3:
+            return `The ${creature.species} lived during the ${creature.period} era.`;
+        case 4:
+            return `The ${creature.species} roamed the lands in ${creature.where}`;
+        case 5:
+            return compareDiet(creature);
+    }
+}
+
+/*
+    @desc Add tiles to DOM
+*/
+
+function addTilesToDOM() {
+    dinos.forEach(dino => createTile(dino))
 }
