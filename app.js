@@ -61,15 +61,47 @@ compareBtn.addEventListener('click', (function() {
 
 function compareWeight(dino) {
     const dinoWt = Number(dino.weight);
-    const dinoHt = Number(dino.height);
 
     if (dinoWt > human.weight) {
         console.log("Dino is heavier");
         return `${dino.species} is ${Math.round(dinoWt / human.weight)} times heavier than you!`;
     } else if (dinoWt < human.weight) {
         console.log("User is heavier");
-        return `You are ${Math.round(dinoWt / human.weight)} times heavier than a ${dino.species}!`;
+        return `You weigh more than a ${dino.species} by ${human.weight - dinoWt} lbs!`;
+    } else {
+        console.log(`tie in weight`);
+        return `You are as heavy as a ${dino.species}!`;
+    }
+}
+
+/*
+    @desc Compare dinosaur's height to user's
+    @param Dino $dino - An instance of a Dinosaur
+*/
+
+function compareHeight(dino) {
+    const dinoHt = Number(dino.height);
+
+    if (dinoHt > human.height) {
+        console.log("Dino is taller");
+        return `${dino.species} is ${dinoHt - human.weight} inches taller than you!`;
+    } else if (dinoHt < human.height) {
+        console.log("User is taller");
+        return `You are ${human.height - dinoHt)} inches taller than a ${dino.species}!`;
     } else {
         console.log(`You are as heavy as a ${dino.species}!`);
+        return `You are as tall as a ${dino.species}`
     }
+}
+
+/*
+    @desc Compare dinosaur's diet to user's
+    @param Dino $dino - An instance of a Dinosaur
+*/
+
+function compareDiet(dino) {
+    const dinodiet = dino.diet;
+    const msg = `yourself, the ${dino.species} dinosaur was a ${dinoDiet}`;
+
+    return `${dinodiet.toLowerCase() != human.diet.toLowerCase() : "Unlike " ? "Like "}` + msg;
 }
