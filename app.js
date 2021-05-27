@@ -70,9 +70,19 @@ compareBtn.addEventListener('click', (function() {
 
         human = new Human("Human",weight, inches, diet, name);
         dinos.splice(4, 0, human);
-        addTilesToDOM();
+        // addTilesToDOM();]
+        configureUI();
     };
 })());
+
+/*
+    @desc Configure UI
+*/
+function configureUI() {
+    let form = document.getElementById('dino-compare');
+    form.style.display = 'none';
+    addTilesToDOM();
+}
 
 /*
     @desc Compare dinosaur's weight to user's
@@ -166,11 +176,11 @@ function getRandomFact(creature) {
         case 2:
             return compareWeight(creature);
         case 3:
-            return `The ${creature.species} lived during the ${creature.period} era.`;
+            return compareDiet(creature);
         case 4:
             return `The ${creature.species} roamed the lands in ${creature.where}`;
         case 5:
-            return compareDiet(creature);
+            return `The ${creature.species} lived during the ${creature.period} era.`;
     }
 }
 
