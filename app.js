@@ -1,9 +1,9 @@
 /*
     @desc Creature Constructor
-    @param string $species - the creature's species
-    @param int $wt - the creature's weight
-    @param int $ht - the creature's height
-    @param string $diet - the creature's diet
+    @param {string} species - the creature's species
+    @param {int} wt - the creature's weight
+    @param {int} ht - the creature's height
+    @param {string} diet - the creature's diet
 */
 function Creature(species, wt, ht, diet) {
     this.species = species;
@@ -14,9 +14,9 @@ function Creature(species, wt, ht, diet) {
 
 /*
     @desc Dino Constructor
-    @param string $where - Dinosaur's habitat
-    @param string $period - The period the dinosaur lived in
-    @param string $fact - A fact about the dinosaur
+    @param {string} where - Dinosaur's habitat
+    @param {string} period - The period the dinosaur lived in
+    @param {string} fact - A fact about the dinosaur
 */
 
 function Dino(species, wt, ht, where, period, fact, diet) {
@@ -28,7 +28,7 @@ function Dino(species, wt, ht, where, period, fact, diet) {
 
 /*
     @desc Human Constructor
-    @param string $name - Human's name
+    @param {string} name - Human's name
 */
 function Human(species, wt, ht, diet, name) {
     Creature.call(this, species, wt, ht, diet);
@@ -43,12 +43,17 @@ const compareBtn = document.getElementById('btn');
 /*
     @desc Read the dinos.json file
 */
-fetch("./dino.json")
+fetch('./dino.json')
     .then((res) => res.json())
     .then((data) => {
         let dinoData = data.Dinos;
         getDinos(dinoData);
     });
+
+/*
+    @desc Parse the dinos out of json file
+    @param {dinoData} - dino.json file
+*/
 
 function getDinos(dinoData) {
     dinoArray = Array();
@@ -58,23 +63,29 @@ function getDinos(dinoData) {
 }
 
 /*
-    @desc Get Human data with IIFE
+    @desc Create a Tile to display dinosaur or human stats
+    @param {creature} - A creatures (dinosaur or human)
 */
 
-compareBtn.addEventListener('click', (function() {
-    return function () {
-        const formData = new FormData(document.querySelector('#dino-compare'));
-        const name = formData.get('name');
-        const inches = Number(formData.get('feet')) * 12 + Number(formData.get('inches'));
-        const weight = formData.get('weight');
-        const diet = formData.get('diet');
+function createTile(creature) {
+    const tile = document.createElement('div');
+    tile.classList.add('grid-item');
+    tile.innerHTML = `
+        <h3>${creature.species}</h3>
+        <img src='images/${creature.species}.png'>
+        <p>${getFact(creature)}</p>
+    `;
 
-        human = new Human("Human",weight, inches, diet, name);
-        dinos.splice(4, 0, human);
-        // addTilesToDOM();]
-        configureUI();
-    };
-})());
+    document.getElementById('grid').appendChild(tile);
+}
+
+/*
+    @desc Add tiles to DOM
+*/
+
+function addTilesToDOM() {
+    dinos.forEach(dino => createTile(dino))
+}
 
 /*
     @desc Configure UI
@@ -87,7 +98,7 @@ function configureUI() {
 
 /*
     @desc Compare dinosaur's weight to user's
-    @param Dino $dino - An instance of a Dinosaur
+    @param {Dino} dino - An instance of a Dinosaur
 */
 
 function compareWeight(dino) {
@@ -104,14 +115,14 @@ function compareWeight(dino) {
 
 /*
     @desc Compare dinosaur's height to user's
-    @param Dino $dino - An instance of a Dinosaur
+    @param {Dino} dino - An instance of a Dinosaur
 */
 
 function compareHeight(dino) {
     const dinoHt = Number(dino.height);
 
     if (dinoHt > human.height) {
-        return `${dino.species} is ${dinoHt - human.weight} inches taller than you!`;
+        return `${dino.species} is ${dinoHt - human.height} inches taller than you!`;
     } else if (dinoHt < human.height) {
         return `You are ${human.height - dinoHt} inches taller than a ${dino.species}!`;
     } else {
@@ -121,51 +132,19 @@ function compareHeight(dino) {
 
 /*
     @desc Compare dinosaur's diet to user's
-    @param Dino $dino - An instance of a Dinosaur
+    @param {Dino} dino - An instance of a Dinosaur
 */
 
 function compareDiet(dino) {
     const dinoDiet = dino.diet;
     const msg = `yourself, the ${dino.species} dinosaur was a ${dinoDiet}`;
 
-    return dinoDiet.toLowerCase() != human.diet.toLowerCase() ? "Unlike " + msg : "Like " + msg;
-}
-
-/*
-    @desc Create a Tile to display dinosaur or human stats
-    @param {creature} A dinosaur or human
-*/
-
-function createTile(creature) {
-    const tile = document.createElement('div');
-    tile.classList.add('grid-item');
-    tile.innerHTML = `
-        <h3>${creature.species}</h3>
-        <img src="images/${creature.species}.png">
-        <p>${getFact(creature)}</p>
-    `;
-
-    document.getElementById('grid').appendChild(tile);
-}
-
-/*
-    @desc Get the fact for the tile
-    @param {creature} A dinosaur or human
-*/
-
-function getFact(creature) {
-    if (creature instanceof Dino && creature.species != "Pigeon") {
-        return getRandomFact(creature);
-    } else if (creature instanceof Human) {
-        return creature.name;
-    } else {
-        return creature.fact;
-    }
+    return dinoDiet.toLowerCase() != human.diet.toLowerCase() ? 'Unlike ' + msg : 'Like ' + msg;
 }
 
 /*
     @desc Get a random fact
-    @param {creature} A dinosaur or human
+    @param {creature} - A dinosaur or human
 */
 function getRandomFact(creature) {
     switch(Math.floor((Math.random() * 5))) {
@@ -185,9 +164,34 @@ function getRandomFact(creature) {
 }
 
 /*
-    @desc Add tiles to DOM
+    @desc Get the fact for the tile
+    @param {creature} - A dinosaur or human
 */
 
-function addTilesToDOM() {
-    dinos.forEach(dino => createTile(dino))
+function getFact(creature) {
+    if (creature instanceof Dino && creature.species != 'Pigeon') {
+        return getRandomFact(creature);
+    } else if (creature instanceof Human) {
+        return creature.name;
+    } else {
+        return creature.fact;
+    }
 }
+
+/*
+    @desc Get Human data with IIFE
+*/
+
+compareBtn.addEventListener('click', (function() {
+    return function () {
+        const formData = new FormData(document.querySelector('#dino-compare'));
+        const name = formData.get('name');
+        const inches = Number(formData.get('feet')) * 12 + Number(formData.get('inches'));
+        const weight = formData.get('weight');
+        const diet = formData.get('diet');
+
+        human = new Human('Human',weight, inches, diet, name);
+        dinos.splice(4, 0, human);
+        configureUI();
+    };
+})());
